@@ -13,11 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data
-            android:name="open_weather_api_key"
-            android:value="@string/open_weather_api_key"
-            />
-
         <activity android:name="net.callofdroidy.wealendar.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
