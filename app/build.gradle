@@ -40,9 +40,11 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.facebook.stetho:stetho:1.5.0'
-    def room_version = "1.1.1"
-    implementation "android.arch.persistence.room:runtime:$room_version"
-    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    def android_arch_version = "1.1.1"
+    implementation "android.arch.persistence.room:runtime:$android_arch_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$android_arch_version"
+    implementation "android.arch.lifecycle:extensions:$android_arch_version"
+    implementation "android.arch.lifecycle:viewmodel:$android_arch_version"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
