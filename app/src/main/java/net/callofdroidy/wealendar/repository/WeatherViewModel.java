@@ -2,9 +2,10 @@ package net.callofdroidy.wealendar.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.content.Context;
+import android.util.Log;
 
 import net.callofdroidy.wealendar.R;
+import net.callofdroidy.wealendar.application.Wealendar;
 import net.callofdroidy.wealendar.database.AppDatabase;
 import net.callofdroidy.wealendar.database.entity.Weather;
 import net.callofdroidy.wealendar.network.errorhandler.BaseErrorHandler;
@@ -21,51 +22,53 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class WeatherViewModel extends BaseViewModel {
+    private static final String TAG = "WeatherViewModel";
 
-
-    private LiveData<List<Weather>> weathers;
+    private MutableLiveData<List<Weather>> weathers;
 
     public WeatherViewModel() {
-
+        weathers = new MutableLiveData<>();
     }
 
-    public LiveData<List<Weather>> getWeathers(Context context) {
-        if (weathers == null) {
-            weathers = new MutableLiveData<List<Weather>>();
-            loadWeathers(707860, context);
-        }
+    public LiveData<List<Weather>> getWeathersByCity(long cityId) {
+        loadWeathers(cityId);
 
         return weathers;
     }
 
-    private void loadWeathers(long cityId, Context context) {
+    public LiveData<List<Weather>> getWeathersByDate(long date) {
+        return null;
+    }
+
+    private void loadWeathers(long cityId) {
         // async operation here
         compositeDisposable.add(NetworkService.getInstance()
-                .get5DayForecast(cityId, context.getString(R.string.open_weather_api_key))
+                .get5DayForecast(cityId, Wealendar.get().getString(R.string.open_weather_api_key))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
                     List<WeatherData> weatherData = response.getList();
                     List<Weather> dataToSave = new ArrayList<>();
                     for (WeatherData data : weatherData) {
-                        dataToSave.add(new Weather(response.getCity().getName(), data.getDt(), data.getMain().getTemp()));
+                        dataToSave.add(new Weather(
+                                response.getCity().getName(), data.getDt(), data.getMain().getTemp()));
                     }
 
                     Observable.fromCallable(new Callable<long[]>() {
                         @Override
                         public long[] call() throws Exception {
-                            return AppDatabase.getAppDatabase(context).weatherDao().insertAll(dataToSave);
+                            return AppDatabase.get().weatherDao().insertAll(dataToSave);
                         }
                     }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<Object>() {
                         @Override
                         public void accept(Object o) throws Exception {
-                            //weathers = AppDatabase.getAppDatabase(context).weatherDao().getAll();
+                            LiveData<List<Weather>> result = AppDatabase.get().weatherDao().getAll();
+                            Log.e(TAG, "accept: " + result.getValue().get(0).city);
+                            //weathers.postValue(result);
                         }
                     });
-                    //AppDatabase.getAppDatabase(context).weatherDao().insertAll(dataToSave);
-
                 }, new BaseErrorHandler()));
     }
 }

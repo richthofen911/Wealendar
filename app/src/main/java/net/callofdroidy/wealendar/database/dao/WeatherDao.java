@@ -1,10 +1,10 @@
 package net.callofdroidy.wealendar.database.dao;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import net.callofdroidy.wealendar.database.entity.Weather;
@@ -16,10 +16,10 @@ public interface WeatherDao {
     @Query("SELECT * FROM Weather")
     LiveData<List<Weather>> getAll();
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Weather... weathers);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long[] insertAll(List<Weather> weathers);
 
     @Delete
