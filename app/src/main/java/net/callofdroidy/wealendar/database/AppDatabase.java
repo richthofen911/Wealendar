@@ -5,9 +5,9 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import net.callofdroidy.wealendar.R;
 import net.callofdroidy.wealendar.database.dao.WeatherDao;
 import net.callofdroidy.wealendar.database.entity.Weather;
-import net.callofdroidy.weathernow.R;
 
 @Database(entities = {Weather.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {

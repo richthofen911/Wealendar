@@ -8,12 +8,12 @@ import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 
 import net.callofdroidy.wealendar.database.entity.Weather;
 import net.callofdroidy.wealendar.network.jsonmodel.WeatherForecastResponse;
 import net.callofdroidy.wealendar.repository.WeatherViewModel;
-import net.callofdroidy.weathernow.R;
 import net.callofdroidy.wealendar.database.AppDatabase;
 import net.callofdroidy.wealendar.network.jsonmodel.WeatherData;
 import net.callofdroidy.wealendar.network.service.NetworkService;
@@ -39,40 +39,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         WeatherViewModel model = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        model.getWeathers().observe(this, new Observer<List<Weather>>() {
+        model.getWeathers(this).observe(this, new Observer<List<Weather>>() {
             @Override
             public void onChanged(@Nullable List<Weather> weathers) {
-
+                if (weathers != null) {
+                    Log.e(TAG, "onChanged: " + weathers.get(0).temp);
+                } else {
+                    Log.e(TAG, "onChanged: weathers null");
+                }
             }
         });
-
-
-
-
-            String openWeatherAppId = getString(R.string.open_weather_api_key);
-
-            Disposable disposable = NetworkService.getInstance()
-                    .get5DayForecast(707860, openWeatherAppId)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(response -> {
-                        List<WeatherData> weatherData = response.getList();
-                        List<Weather> dataToSave = new ArrayList<>();
-                        for (WeatherData data : weatherData) {
-                            dataToSave.add(new Weather(response.getCity().getName(), data.getDt(), data.getMain().getTemp()));
-                        }
-                        AppDatabase.getAppDatabase(MainActivity.this).weatherDao().insertAll(dataToSave);
-                    }, new ForecastErrorConsumer());
-            compositeDisposable.add(disposable);
-
-    }
-
-    private class ForecastErrorConsumer implements Consumer<Throwable> {
-
-        @Override
-        public void accept(Throwable throwable) throws Exception {
-
-        }
     }
 
     @Override
