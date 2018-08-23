@@ -2,4 +2,7 @@
     <string name="app_name">WeatherNow</string>
     <string name="database_name">app_db</string>
     <string name="open_weather_api_key">f5f74151a7fcea75a03c01c2ab9f432e</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

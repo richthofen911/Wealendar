@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:exifinterface:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
@@ -42,6 +43,7 @@ dependencies {
     implementation 'com.facebook.stetho:stetho:1.5.0'
     def android_arch_version = "1.1.1"
     implementation "android.arch.persistence.room:runtime:$android_arch_version"
+    implementation 'com.android.support:support-v4:27.1.1'
     annotationProcessor "android.arch.persistence.room:compiler:$android_arch_version"
     implementation "android.arch.lifecycle:extensions:$android_arch_version"
     implementation "android.arch.lifecycle:viewmodel:$android_arch_version"

@@ -18,7 +18,6 @@ public abstract class AppDatabase extends RoomDatabase {
             INSTANCE =
                     Room.databaseBuilder(Wealendar.get(), AppDatabase.class,
                             Wealendar.get().getString(R.string.database_name))
-                            // allow queries on the main thread.
                             //.allowMainThreadQueries()
                             .build();
         }
