@@ -4,36 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:gravity="center"
     tools:context=".ui.SplashScreenActivity">
 
     <TextView
         android:id="@+id/fullscreen_content"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:keepScreenOn="true"
         android:text="CALL"
         android:textColor="@color/android_green"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/good_dog_plain" />
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
         android:gravity="center"
         android:keepScreenOn="true"
         android:text="OF"
         android:textColor="@color/android_green"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+        android:textSize="20sp"
+        android:fontFamily="@font/good_dog_plain" />
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:keepScreenOn="true"
+        android:layout_marginStart="@dimen/margin_small"
         android:text="DROIDY"
         android:textColor="@color/android_green"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/good_dog_plain" />
 </LinearLayout>
