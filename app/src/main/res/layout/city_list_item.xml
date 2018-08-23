@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_height_regular"
+    android:paddingStart="@dimen/padding_regular"
+    android:paddingEnd="@dimen/padding_regular"
+    android:weightSum="6">
+    <TextView
+        android:id="@+id/tv_city_list_city_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:gravity="center_vertical"
+        android:textSize="18sp"
+        tools:text="Toronto"/>
+    <TextView
+        android:id="@+id/tv_city_list_temperature"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        tools:text="21"/>
+    <ImageView
+        android:id="@+id/tv_city_list_weather_icon"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="@drawable/ic_sunny"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/city_list_weather_icon" />
+    <TextView
+        android:id="@+id/tv_city_list_short_description"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:gravity="center_vertical"
+        android:textSize="14sp"
+        tools:text="Scattered Thunderstorm"/>
+</LinearLayout>
