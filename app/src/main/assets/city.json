@@ -1,0 +1,47 @@
+[
+  {
+    "id": 6167865,
+    "name": "Toronto",
+    "country": "CA",
+    "coord": {
+      "lon": -79.416298,
+      "lat": 43.700111
+    }
+  },
+  {
+    "id": 6173331,
+    "name": "Vancouver",
+    "country": "CA",
+    "coord": {
+      "lon": -123.119339,
+      "lat": 49.24966
+    }
+  },
+  {
+    "id": 5969423,
+    "name": "Halifax",
+    "country": "CA",
+    "coord": {
+      "lon": -63.57333,
+      "lat": 44.646
+    }
+  },
+  {
+    "id": 6094817,
+    "name": "Ottawa",
+    "country": "CA",
+    "coord": {
+      "lon": -75.69812,
+      "lat": 45.411171
+    }
+  },
+  {
+    "id": 5913490,
+    "name": "Calgary",
+    "country": "CA",
+    "coord": {
+      "lon": -114.085289,
+      "lat": 51.05011
+    }
+  }
+]

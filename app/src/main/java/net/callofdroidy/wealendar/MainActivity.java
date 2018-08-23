@@ -3,6 +3,7 @@ package net.callofdroidy.wealendar;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,16 +22,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         WeatherViewModel model = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        model.getWeathersByCity(707860).observe(this, new Observer<List<Weather>>() {
+        model.fetchWeatherByCity(707860);
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onChanged(@Nullable List<Weather> weathers) {
-                if (weathers != null) {
-                    Log.e(TAG, "onChanged: " + weathers.get(0).temp);
-                } else {
-                    Log.e(TAG, "onChanged: weathers null");
-                }
+            public void run() {
+                model.getAllWeathers().observe(MainActivity.this, new Observer<List<Weather>>() {
+                    @Override
+                    public void onChanged(@Nullable List<Weather> weathers) {
+                        if (weathers != null) {
+                            Log.e(TAG, "onChanged: " + weathers.get(0).temp);
+                        } else {
+                            Log.e(TAG, "onChanged: weathers null");
+                        }
+                    }
+                });
             }
-        });
+        }, 2000);
+
     }
 
     @Override
