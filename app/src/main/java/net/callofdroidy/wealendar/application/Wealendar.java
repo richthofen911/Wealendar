@@ -1,10 +1,11 @@
 package net.callofdroidy.wealendar.application;
 
-import android.app.Application;
-
 import com.facebook.stetho.Stetho;
 
-public class Wealendar extends Application {
+import net.callofdroidy.core.BuildConfig;
+import net.callofdroidy.core.application.BaseApplication;
+
+public class Wealendar extends BaseApplication {
     private static Wealendar INSTANCE;
 
     public synchronized static Wealendar get() {
@@ -17,6 +18,9 @@ public class Wealendar extends Application {
 
         INSTANCE = this;
 
-        Stetho.initializeWithDefaults(this);
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this);
+        }
+
     }
 }

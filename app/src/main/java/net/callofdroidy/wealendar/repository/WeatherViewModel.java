@@ -3,18 +3,17 @@ package net.callofdroidy.wealendar.repository;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
-import net.callofdroidy.wealendar.R;
-import net.callofdroidy.wealendar.application.Wealendar;
 import net.callofdroidy.wealendar.database.AppDatabase;
 import net.callofdroidy.wealendar.database.entity.Weather;
-import net.callofdroidy.wealendar.network.errorhandler.BaseErrorHandler;
-import net.callofdroidy.wealendar.network.jsonmodel.WeatherData;
+import net.callofdroidy.wealendar.network.jsonmodel.MultipleWeatherCurrentResponse;
+import net.callofdroidy.wealendar.network.jsonmodel.SingleWeatherCurrentResponse;
+import net.callofdroidy.wealendar.network.jsonmodel.WeatherForecast;
 import net.callofdroidy.wealendar.network.jsonmodel.WeatherForecastResponse;
 import net.callofdroidy.wealendar.network.service.NetworkService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -27,6 +26,15 @@ public class WeatherViewModel extends BaseViewModel {
     private static final String TAG = "WeatherViewModel";
 
     private LiveData<List<Weather>> weathers;
+    private LiveData<List<Weather>> currentWeathers;
+
+    // 2xx Thunderstorm
+    // 3xx Drizzle
+    // 5xx Rain
+    // 6xx Snow
+    // 7xx Mist
+    // 800 Clear
+    // 80x Clouds
 
     public WeatherViewModel(Application application) {
         super(application);
@@ -45,9 +53,38 @@ public class WeatherViewModel extends BaseViewModel {
         return null;
     }
 
-    public void fetchWeatherByCity(long cityId) {
+    public void fetchMultipleCitiesCurrentWeathers(String cityIds) {
         compositeDisposable.add(NetworkService.getInstance()
-                .get5DayForecast(cityId, Wealendar.get().getString(R.string.open_weather_api_key))
+                .getCurrentWeather(cityIds)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<MultipleWeatherCurrentResponse>() {
+                    @Override
+                    public void accept(MultipleWeatherCurrentResponse response) throws Exception {
+                        for(SingleWeatherCurrentResponse singleWeather : response.getList()) {
+                            long date = singleWeather.getDt();
+                            long cityId = singleWeather.getId();
+                            String cityName = singleWeather.getName();
+
+                            float temperature = singleWeather.getMain().getTemp();
+
+                            int weaterConditionId = singleWeather.getWeather().getId();
+                            String weatherDescription = singleWeather.getWeather().getDescription();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                })
+        );
+    }
+
+    public void fetchWeatherByCity(String cityId) {
+        compositeDisposable.add(NetworkService.getInstance()
+                .get5DayForecast(cityId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<WeatherForecastResponse>() {
@@ -60,13 +97,14 @@ public class WeatherViewModel extends BaseViewModel {
                     public void accept(Throwable throwable) throws Exception {
 
                     }
-                }));
+                })
+        );
     }
 
     public void insertWeatherToDB(WeatherForecastResponse response){
-        List<WeatherData> weatherData = response.getList();
+        List<WeatherForecast> weatherData = response.getList();
         List<Weather> dataToSave = new ArrayList<>();
-        for (WeatherData data : weatherData) {
+        for (WeatherForecast data : weatherData) {
             dataToSave.add(new Weather(
                     response.getCity().getName(), data.getDt(), data.getMain().getTemp()));
         }

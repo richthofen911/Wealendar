@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         WeatherViewModel model = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        model.fetchWeatherByCity(707860);
+        model.fetchWeatherByCity("707860");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

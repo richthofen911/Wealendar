@@ -6,7 +6,7 @@ public class WeatherForecastResponse{
     private String cod;
     private float message;
     private int cnt;
-    private List<WeatherData> list;
+    private List<WeatherForecast> list;
     private City city;
 
     WeatherForecastResponse() {
@@ -25,7 +25,7 @@ public class WeatherForecastResponse{
         return cnt;
     }
 
-    public List<WeatherData> getList() {
+    public List<WeatherForecast> getList() {
         return list;
     }
 

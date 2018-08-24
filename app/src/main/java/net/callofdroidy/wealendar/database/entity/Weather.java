@@ -10,18 +10,31 @@ public class Weather {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
-    @ColumnInfo(name = "city")
-    public String city;
-
     @ColumnInfo(name = "date")
     public long date;
 
-    @ColumnInfo(name = "temp")
-    public float temp;
+    @ColumnInfo(name = "city_id")
+    public long cityId;
 
-    public Weather(String city, long date, float temp) {
-        this.city = city;
+    @ColumnInfo(name = "city_name")
+    public String cityName;
+
+    @ColumnInfo(name = "temperature")
+    public float temperature;
+
+    @ColumnInfo(name = "weather_condition_id")
+    public int weatherConditionId;
+
+    @ColumnInfo(name = "weather_description")
+    public String weatherDescription;
+
+    public Weather(long date, long cityId, String cityName,
+                   float temperature, int weatherConditionId, String weatherDescription) {
         this.date = date;
-        this.temp = temp;
+        this.cityId = cityId;
+        this.cityName = cityName;
+        this.temperature = temperature;
+        this.weatherConditionId = weatherConditionId;
+        this.weatherDescription = weatherDescription;
     }
 }
