@@ -15,5 +15,5 @@ public interface OpenWeatherService {
 
     @GET("group?units=metric")
     Observable<MultipleWeatherCurrentResponse> getMultipleCitiesCurrentWeather(
-            @Query("group") String cityIds, @Query("appid") String appId);
+            @Query(value = "id", encoded = true) String cityIds, @Query("appid") String appId);
 }

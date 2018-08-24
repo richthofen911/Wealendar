@@ -34,7 +34,7 @@ public class NetworkService {
         return openWeatherService.get5DayForecast(cityId, openWeatherApiKey);
     }
 
-    public Observable<MultipleWeatherCurrentResponse> getCurrentWeather(String cityIds) {
+    public Observable<MultipleWeatherCurrentResponse> getMultipleCitiesCurrentWeather(String cityIds) {
         return openWeatherService.getMultipleCitiesCurrentWeather(cityIds, openWeatherApiKey);
     }
 }

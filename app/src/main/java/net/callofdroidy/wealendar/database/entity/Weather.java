@@ -2,14 +2,9 @@ package net.callofdroidy.wealendar.database.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
 
-@Entity
+@Entity(primaryKeys = {"date", "city_id"})
 public class Weather {
-
-    @PrimaryKey(autoGenerate = true)
-    public int id;
-
     @ColumnInfo(name = "date")
     public long date;
 

@@ -13,7 +13,6 @@ import net.callofdroidy.wealendar.network.jsonmodel.WeatherForecastResponse;
 import net.callofdroidy.wealendar.network.service.NetworkService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -28,16 +27,9 @@ public class WeatherViewModel extends BaseViewModel {
     private LiveData<List<Weather>> weathers;
     private LiveData<List<Weather>> currentWeathers;
 
-    // 2xx Thunderstorm
-    // 3xx Drizzle
-    // 5xx Rain
-    // 6xx Snow
-    // 7xx Mist
-    // 800 Clear
-    // 80x Clouds
-
     public WeatherViewModel(Application application) {
         super(application);
+        currentWeathers = new MutableLiveData<>();
         weathers = new MutableLiveData<>();
     }
 
@@ -49,37 +41,12 @@ public class WeatherViewModel extends BaseViewModel {
         return AppDatabase.get().weatherDao().getAll();
     }
 
-    public LiveData<List<Weather>> getWeathersByDate(long date) {
-        return null;
+    public LiveData<List<Weather>> getCurrentWeathers(int cityInTotal) {
+        return AppDatabase.get().weatherDao().getCurrentWeatherOfCities(cityInTotal);
     }
 
-    public void fetchMultipleCitiesCurrentWeathers(String cityIds) {
-        compositeDisposable.add(NetworkService.getInstance()
-                .getCurrentWeather(cityIds)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<MultipleWeatherCurrentResponse>() {
-                    @Override
-                    public void accept(MultipleWeatherCurrentResponse response) throws Exception {
-                        for(SingleWeatherCurrentResponse singleWeather : response.getList()) {
-                            long date = singleWeather.getDt();
-                            long cityId = singleWeather.getId();
-                            String cityName = singleWeather.getName();
-
-                            float temperature = singleWeather.getMain().getTemp();
-
-                            int weaterConditionId = singleWeather.getWeather().getId();
-                            String weatherDescription = singleWeather.getWeather().getDescription();
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-
-                    }
-                })
-        );
+    public LiveData<List<Weather>> getWeathersByDate(long date) {
+        return null;
     }
 
     public void fetchWeatherByCity(String cityId) {
@@ -90,7 +57,7 @@ public class WeatherViewModel extends BaseViewModel {
                 .subscribe(new Consumer<WeatherForecastResponse>() {
                     @Override
                     public void accept(WeatherForecastResponse weatherForecastResponse) throws Exception {
-                        insertWeatherToDB(weatherForecastResponse);
+                        //insertWeatherToDB(weatherForecastResponse);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -101,6 +68,7 @@ public class WeatherViewModel extends BaseViewModel {
         );
     }
 
+    /*
     public void insertWeatherToDB(WeatherForecastResponse response){
         List<WeatherForecast> weatherData = response.getList();
         List<Weather> dataToSave = new ArrayList<>();
@@ -122,4 +90,5 @@ public class WeatherViewModel extends BaseViewModel {
                     }
                 }));
     }
+    */
 }

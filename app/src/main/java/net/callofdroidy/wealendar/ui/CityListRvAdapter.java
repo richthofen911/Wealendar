@@ -33,6 +33,6 @@ public class CityListRvAdapter extends RecyclerView.Adapter<CityListViewHolder> 
 
     @Override
     public int getItemCount() {
-        return 0;
+        return cityListItems.size();
     }
 }

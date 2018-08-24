@@ -16,12 +16,21 @@ public interface WeatherDao {
     @Query("SELECT * FROM Weather")
     LiveData<List<Weather>> getAll();
 
+    @Query("SELECT * FROM Weather ORDER BY date ASC LIMIT :cityInTotal")
+    LiveData<List<Weather>> getCurrentWeatherOfCities(int cityInTotal);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Weather... weathers);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insertAll(List<Weather> weathers);
+    long[] insert(List<Weather> weathers);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Long insert(Weather weather);
 
     @Delete
     void delete(Weather weather);
+
+    @Query("DELETE FROM Weather WHERE date < date('now')")
+    void deleteExpiredWeather();
 }

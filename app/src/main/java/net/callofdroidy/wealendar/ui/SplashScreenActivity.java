@@ -1,10 +1,8 @@
 package net.callofdroidy.wealendar.ui;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.annotation.Nullable;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -13,12 +11,26 @@ import android.view.Window;
 import com.google.gson.Gson;
 
 import net.callofdroidy.core.utils.FileManager;
+import net.callofdroidy.wealendar.KEY;
+import net.callofdroidy.wealendar.MainActivity;
 import net.callofdroidy.wealendar.R;
+import net.callofdroidy.wealendar.database.AppDatabase;
 import net.callofdroidy.wealendar.database.entity.Weather;
+import net.callofdroidy.wealendar.network.errorhandler.BaseErrorHandler;
 import net.callofdroidy.wealendar.network.jsonmodel.City;
-import net.callofdroidy.wealendar.repository.WeatherViewModel;
+import net.callofdroidy.wealendar.network.jsonmodel.SingleWeatherCurrentResponse;
+import net.callofdroidy.wealendar.network.service.NetworkService;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class SplashScreenActivity extends AppCompatActivity {
     private static final String TAG = "SplashScreen";
@@ -27,11 +39,14 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private View mContentView;
 
+    private boolean isInitializationDone = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_splash_screen);
+
 
         mContentView = findViewById(R.id.fullscreen_content);
 
@@ -42,35 +57,73 @@ public class SplashScreenActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
-        Gson gson = new Gson();
-        City[] cities = gson.fromJson(
-                FileManager.get().loadJsonFromAsset("city.json"), City[].class);
-        StringBuilder stringBuilder = new StringBuilder();
-        for (City city : cities) {
-            stringBuilder.append(city.getId()).append(",");
-        }
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
-
-        WeatherViewModel model = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        model.fetchWeatherByCity("707860");
-        model.getAllWeathers().observe(SplashScreenActivity.this, new Observer<List<Weather>>() {
-            @Override
-            public void onChanged(@Nullable List<Weather> weathers) {
-                if (weathers != null) {
-                    Log.e(TAG, "onChanged: " + weathers.get(0).temp);
-                } else {
-                    Log.e(TAG, "onChanged: weathers null");
-                }
+        new Handler().postDelayed(() -> {
+            if (isInitializationDone) {
+                Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
-        });
+        }, 2000);
 
-        long lastUpdateTime = FileManager.get().getSharedPreference("app_info").
-                getLong("last_update_time", 0);
+        long lastUpdateTime = FileManager.get()
+                .getSharedPreference(KEY.FILE_APP_INFO)
+                .getLong(KEY.DATA_LAST_UPDATE_TIME, 0);
+
         if (System.currentTimeMillis() - lastUpdateTime >= UPDATE_INTERVAL) {
-            // fetch data from server
+            Gson gson = new Gson();
+            City[] cities = gson.fromJson(
+                    FileManager.get().loadJsonFromAsset(KEY.FILE_CITY_JSON), City[].class);
+            StringBuilder stringBuilder = new StringBuilder();
 
+            for (City city : cities) {
+                stringBuilder.append(city.getId()).append(",");
+            }
+
+            try {
+                String encoded = URLEncoder.encode(
+                        stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString(), "utf-8");
+                CompositeDisposable compositeDisposable = new CompositeDisposable();
+                compositeDisposable.add(NetworkService.getInstance()
+                        .getMultipleCitiesCurrentWeather(
+                                encoded)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(response -> {
+                            List<Weather> weathers = new ArrayList<>();
+                            for(SingleWeatherCurrentResponse singleWeather : response.getList()) {
+                                weathers.add(new Weather(
+                                        singleWeather.getDt(),
+                                        singleWeather.getId(),
+                                        singleWeather.getName(),
+                                        singleWeather.getMain().getTemp(),
+                                        singleWeather.getWeather().get(0).getId(),
+                                        singleWeather.getWeather().get(0).getDescription()
+                                ));
+                            }
+                            compositeDisposable.add(
+                                    Observable.fromCallable(
+                                            () -> AppDatabase.get().weatherDao()
+                                                    .insert(weathers)).subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe((Consumer<Object>) o -> {
+                                                FileManager.get()
+                                                        .getSharedPreference(KEY.FILE_APP_INFO)
+                                                        .edit()
+                                                        .putLong(
+                                                                KEY.DATA_LAST_UPDATE_TIME,
+                                                                System.currentTimeMillis()).apply();
+
+                                                isInitializationDone = true;
+                                            }, new BaseErrorHandler())
+                            );
+
+                        }, new BaseErrorHandler())
+                );
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         } else {
-            // read data from db
+            isInitializationDone = true;
         }
     }
 }

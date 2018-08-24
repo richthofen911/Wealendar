@@ -1,8 +1,10 @@
 package net.callofdroidy.wealendar.network.jsonmodel;
 
+import java.util.List;
+
 public class SingleWeatherCurrentResponse {
     private Coord coord;
-    private Weather weather;
+    private List<Weather> weather;
     private Main main;
     private long dt;
     private long id; // city ID
@@ -12,7 +14,7 @@ public class SingleWeatherCurrentResponse {
         return coord;
     }
 
-    public Weather getWeather() {
+    public List<Weather> getWeather() {
         return weather;
     }
 

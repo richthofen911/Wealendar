@@ -4,8 +4,6 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_height_regular"
-    android:paddingStart="@dimen/padding_regular"
-    android:paddingEnd="@dimen/padding_regular"
     android:weightSum="6">
     <TextView
         android:id="@+id/tv_city_list_city_name"
@@ -23,7 +21,7 @@
         android:gravity="center_vertical"
         tools:text="21"/>
     <ImageView
-        android:id="@+id/tv_city_list_weather_icon"
+        android:id="@+id/iv_city_list_weather_icon"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
