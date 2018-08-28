@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="@dimen/padding_regular"
@@ -34,8 +36,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" >
-        <net.callofdroidy.wealendar.ui.customview.Grid
+        <net.callofdroidy.wealendar.ui.customview.CoordAxis
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:axis_x_tag="day"
+            app:axis_y_tag="temperature"
+            app:color="@color/android_green"/>
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>
